@@ -8,11 +8,8 @@ import com.github.liamdev06.utils.java.SinglePointInitiator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 
-import java.util.Arrays;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link SchedulerAdapter} using {@link ScheduledExecutorService}. Handles the underlying scheduler and worker instances.
@@ -22,7 +19,6 @@ public abstract class AbstractSchedulerAdapter extends SinglePointInitiator impl
 
     private static final @NonNull String WORKER_THREAD_PREFIX =  "liam-tools-worker-";
     private static final @NonNull String SCHEDULER_THREAD_NAME = "liam-tools-scheduler";
-    private static final byte PARALLELISM = 16;
 
     private final @NonNull Logger logger;
     private final @NonNull ScheduledThreadPoolExecutor scheduler;
@@ -39,7 +35,7 @@ public abstract class AbstractSchedulerAdapter extends SinglePointInitiator impl
         this.scheduler.setRemoveOnCancelPolicy(true);
         this.scheduler.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
         this.worker = new ForkJoinPool(
-                PARALLELISM,
+                16,
                 new WorkerThreadFactory(),
                 new ExceptionHandler(this.logger),
                 false
@@ -63,13 +59,11 @@ public abstract class AbstractSchedulerAdapter extends SinglePointInitiator impl
         this.scheduler.shutdown();
 
         try {
-            // Try to wait for termination, otherwise time out
             if (!this.scheduler.awaitTermination(1, TimeUnit.MINUTES)) {
-                this.logger.error(String.format("Timed out waiting for the '%s' to terminate.", SCHEDULER_THREAD_NAME));
-                this.dumpRunningTasks(thread -> thread.getName().equals(SCHEDULER_THREAD_NAME));
+                this.logger.error("Timed out! Was waiting for thread '" + SCHEDULER_THREAD_NAME + "' to terminate.");
             }
         } catch (InterruptedException exception) {
-            this.logger.error(String.format("Interrupted while waiting for the '%s' to terminate.", SCHEDULER_THREAD_NAME), exception);
+            this.logger.error("Interrupted! Was waiting for thread '" + SCHEDULER_THREAD_NAME + "' to terminate.", exception);
         }
     }
 
@@ -79,13 +73,11 @@ public abstract class AbstractSchedulerAdapter extends SinglePointInitiator impl
 
         final String formattedWorkerName = WORKER_THREAD_PREFIX.substring(0, WORKER_THREAD_PREFIX.length() - 1);
         try {
-            // Try to wait for termination, otherwise time out
             if (!this.worker.awaitTermination(1, TimeUnit.MINUTES)) {
-                this.logger.error(String.format("Timed out waiting for the '%s' to terminate.", formattedWorkerName));
-                this.dumpRunningTasks(thread -> thread.getName().startsWith(WORKER_THREAD_PREFIX));
+                this.logger.error("Timed out! Was waiting for worker '" + formattedWorkerName + "' to terminate.");
             }
         } catch (InterruptedException exception) {
-            this.logger.error(String.format("Interrupted while waiting for the '%s' thread pool to terminate.", formattedWorkerName), exception);
+            this.logger.error("Interrupted! Was waiting for worker '" + formattedWorkerName + "' to terminate.", exception);
         }
     }
 
@@ -95,21 +87,17 @@ public abstract class AbstractSchedulerAdapter extends SinglePointInitiator impl
     }
 
     /**
-     * Dumps all running tasks from threads that fulfill
-     * the parameter {@code filter} along with their stack trace.
-     *
-     * @param filter Filter to filter out the threads to dump.
+     * @return Instance of the {@link ScheduledThreadPoolExecutor} used in this implementation.
      */
-    private void dumpRunningTasks(@NonNull Predicate<Thread> filter) {
-        Thread.getAllStackTraces().forEach((thread, stackTrace) -> {
-            if (filter.test(thread)) {
-                final String name = thread.getName();
-                final String stackTraceString = Arrays.stream(stackTrace)
-                        .map(StackTraceElement::toString)
-                        .collect(Collectors.joining("\n"));
-                this.logger.warn(String.format("Thread '%s' is blocked. Stack trace dump: %s", name, stackTraceString));
-            }
-        });
+    public @NonNull ScheduledThreadPoolExecutor getScheduler() {
+        return this.scheduler;
+    }
+
+    /**
+     * @return Instance of the {@link ForkJoinPool} used in this implementation.
+     */
+    public @NonNull ForkJoinPool getWorker() {
+        return this.worker;
     }
 
     /**
@@ -135,21 +123,7 @@ public abstract class AbstractSchedulerAdapter extends SinglePointInitiator impl
     private record ExceptionHandler(@NonNull Logger logger) implements Thread.UncaughtExceptionHandler {
         @Override
         public void uncaughtException(@NonNull Thread thread, @NonNull Throwable exception) {
-            this.logger.error("Exception in thread {}", thread.getName(), exception);
+            this.logger.error("An exception was caught in thread {}.", thread.getName(), exception);
         }
-    }
-
-    /**
-     * @return Instance of the {@link ScheduledThreadPoolExecutor} used in this implementation.
-     */
-    public @NonNull ScheduledThreadPoolExecutor getScheduler() {
-        return this.scheduler;
-    }
-
-    /**
-     * @return Instance of the {@link ForkJoinPool} used in this implementation.
-     */
-    public @NonNull ForkJoinPool getWorker() {
-        return this.worker;
     }
 }
