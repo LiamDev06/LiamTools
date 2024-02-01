@@ -1,5 +1,4 @@
-<h1 align="center">Liam tools</h1>
-
+# Liam Tools
 `LiamTools` consist of a wide set of tools, frameworks and utilities created for Minecraft plugin development.
 
 ## About
