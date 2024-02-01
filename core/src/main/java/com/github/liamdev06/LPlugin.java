@@ -5,6 +5,9 @@ import com.github.liamdev06.component.Component;
 import com.github.liamdev06.component.ComponentManager;
 import com.github.liamdev06.configuration.ConfigurationManager;
 import com.github.liamdev06.registry.RegistryFactory;
+import com.github.liamdev06.scheduler.BukkitSchedulerAdapter;
+import com.github.liamdev06.scheduler.handler.SchedulerHandlerManager;
+import com.github.liamdev06.scheduler.interfaces.SchedulerAdapter;
 import com.github.liamdev06.utils.bukkit.ListenerRegistryFactory;
 import com.github.liamdev06.utils.java.LoggerUtil;
 import dev.jorel.commandapi.CommandAPI;
@@ -37,6 +40,8 @@ public abstract class LPlugin extends JavaPlugin {
 
     private ComponentManager componentManager;
     private CommandManager commandManager;
+    private SchedulerAdapter schedulerAdapter;
+    private SchedulerHandlerManager schedulerHandlerManager;
 
     public LPlugin() {
         this.parentPluginClass = this.getClass();
@@ -81,11 +86,15 @@ public abstract class LPlugin extends JavaPlugin {
 
         this.componentManager = new ComponentManager(this, this.registryFactory);
         this.commandManager = new CommandManager(this);
+        this.schedulerAdapter = new BukkitSchedulerAdapter(this);
+        this.schedulerHandlerManager = new SchedulerHandlerManager(this.registryFactory);
+
         this.registryFactory.executeAllAutoRegistering();
         this.componentManager.enableAllComponents();
 
         CommandAPI.onEnable();
         new ListenerRegistryFactory(this).registerAllListeners();
+        this.schedulerHandlerManager.startAllAutoSchedulers();
 
         long finishedTime = System.currentTimeMillis() - timeAtStart;
         this.logStartupInformationDone(finishedTime);
@@ -101,6 +110,9 @@ public abstract class LPlugin extends JavaPlugin {
 
         if (this.componentManager != null) {
             this.componentManager.disableAllComponents();
+        }
+        if (this.schedulerAdapter != null) {
+            this.schedulerAdapter.shutdown();
         }
 
         long finishedTime = System.currentTimeMillis() - timeAtStart;
@@ -178,6 +190,20 @@ public abstract class LPlugin extends JavaPlugin {
      */
     public @NonNull CommandManager getCommandManager() {
         return this.commandManager;
+    }
+
+    /**
+     * @return The {@link SchedulerAdapter} used to work with synchronous and asynchronous tasks.
+     */
+    public @NonNull SchedulerAdapter getSchedulerAdapter() {
+        return this.schedulerAdapter;
+    }
+
+    /**
+     * @return The {@link SchedulerHandlerManager} used to abstract task logic to separate classes.
+     */
+    public @NonNull SchedulerHandlerManager getSchedulerHandlerManager() {
+        return this.schedulerHandlerManager;
     }
 
     /**
