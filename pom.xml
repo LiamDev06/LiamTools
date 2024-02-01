@@ -8,7 +8,7 @@
     <artifactId>liam-tools</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
-    <description>Desc</description>
+    <description>Set of tools, frameworks and utilities created for Minecraft plugin development using Bukkit/Spigot/Paper.</description>
 
     <modules>
         <module>core</module>
