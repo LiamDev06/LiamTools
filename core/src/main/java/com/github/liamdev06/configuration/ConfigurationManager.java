@@ -1,6 +1,7 @@
 package com.github.liamdev06.configuration;
 
 import com.github.liamdev06.LPlugin;
+import com.github.liamdev06.utils.bukkit.BukkitFileUtil;
 import com.github.liamdev06.utils.java.LoggerUtil;
 import com.github.liamdev06.utils.java.SinglePointInitiator;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -9,6 +10,7 @@ import org.spongepowered.configurate.gson.GsonConfigurationLoader;
 import org.spongepowered.configurate.loader.AbstractConfigurationLoader;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -24,19 +26,31 @@ public class ConfigurationManager extends SinglePointInitiator {
     private final @NonNull Logger logger;
     private final @NonNull Map<String, ConfigurationProvider> configurations;
 
-    public ConfigurationManager(@NonNull LPlugin entryPoint) throws URISyntaxException {
+    public ConfigurationManager(@NonNull LPlugin plugin) throws URISyntaxException {
         this.configurations = new HashMap<>();
 
         ClassLoader classLoader = this.getClass().getClassLoader();
-        Logger logger = LoggerUtil.createLoggerWithIdentifier(entryPoint, "ConfigManager");
+        Logger logger = LoggerUtil.createLoggerWithIdentifier(plugin, "ConfigManager");
         this.logger = logger;
 
-        Class<? extends LPlugin> entryPointClass = entryPoint.getClass();
-        if (!entryPointClass.isAnnotationPresent(LoadEmbeddedConfigurations.class)) {
+        Class<? extends LPlugin> entryPointClass = plugin.getClass();
+        if (!entryPointClass.isAnnotationPresent(LoadConfigurations.class)) {
             return;
         }
 
-        for (String fileName : entryPointClass.getAnnotation(LoadEmbeddedConfigurations.class).values()) {
+        boolean freshSetup = false;
+        File config = new File(plugin.getDataFolder(), "config.yml");
+
+        if (!config.exists()) {
+            freshSetup = true;
+            LPlugin.LOG.info("Detected fresh plugin setup.");
+
+            if (plugin.getDataFolder().mkdir()) {
+                LPlugin.LOG.info("Plugin data folder was created.");
+            }
+        }
+
+        for (String fileName : entryPointClass.getAnnotation(LoadConfigurations.class).values()) {
             String[] args = fileName.split("\\.");
             if (args.length == 0) {
                 logger.error("Could not find an extension for config '" + fileName + "'. Skipping it in load in!");
@@ -62,9 +76,12 @@ public class ConfigurationManager extends SinglePointInitiator {
                 continue;
             }
 
-            // TODO Add config options
             ConfigurationProvider provider = new ConfigurationProvider(fileName, loader);
             this.registerConfig(provider);
+
+            if (freshSetup) {
+                BukkitFileUtil.setupPluginFile(plugin, fileName);
+            }
         }
     }
 
