@@ -97,12 +97,22 @@ public class ConfigurationManager extends SinglePointInitiator {
     }
 
     /**
-     * Find a cached configuration based on its file name.
+     * Find a cached configuration based on its file identifier.
      *
-     * @param fileName The file name to find a configuration with.
+     * @param fileId The file name to find a configuration with.
      * @return Instance of the found {@link ConfigurationProvider} wrapped in an {@link Optional}.
      */
-    public Optional<ConfigurationProvider> getConfigByName(@NonNull String fileName) {
-        return Optional.ofNullable(this.configurations.get(fileName));
+    public Optional<ConfigurationProvider> getConfigById(@NonNull ConfigIdentifier fileId) {
+        return this.getConfigById(fileId.getKey());
+    }
+
+    /**
+     * Find a cached configuration based on its file identifier.
+     *
+     * @param fileId The file name to find a configuration with.
+     * @return Instance of the found {@link ConfigurationProvider} wrapped in an {@link Optional}.
+     */
+    public Optional<ConfigurationProvider> getConfigById(@NonNull String fileId) {
+        return Optional.ofNullable(this.configurations.get(fileId));
     }
 }
