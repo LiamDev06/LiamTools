@@ -50,7 +50,7 @@ public class ConfigurationManager extends SinglePointInitiator {
             }
         }
 
-        for (String fileName : entryPointClass.getAnnotation(LoadConfigurations.class).values()) {
+        for (String fileName : entryPointClass.getAnnotation(LoadConfigurations.class).value()) {
             String[] args = fileName.split("\\.");
             if (args.length == 0) {
                 logger.error("Could not find an extension for config '" + fileName + "'. Skipping it in load in!");

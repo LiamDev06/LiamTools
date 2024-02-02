@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * Annotate to specify which configuration files to load in on application start up into {@link ConfigurationManager}.
  * <p>
- * This annotation can only be annotated on the class implementing {@link net.hexilion.library.common.HexAppEntrypoint}, and
+ * This annotation can only be annotated on the class implementing {@link com.github.liamdev06.LPlugin}, and
  * the {@link ConfigurationManager} must be instantiated in the same class.
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -23,5 +23,5 @@ public @interface LoadConfigurations {
      *         <p>
      *         If the file is not located in the root resources directory, also include the added path.
      */
-    @NonNull String[] values();
+    @NonNull String[] value();
 }
