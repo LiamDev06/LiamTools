@@ -3,7 +3,9 @@ package com.github.liamdev06;
 import com.github.liamdev06.command.CommandManager;
 import com.github.liamdev06.component.Component;
 import com.github.liamdev06.component.ComponentManager;
+import com.github.liamdev06.configuration.ConfigIdentifier;
 import com.github.liamdev06.configuration.ConfigurationManager;
+import com.github.liamdev06.configuration.ConfigurationProvider;
 import com.github.liamdev06.registry.RegistryFactory;
 import com.github.liamdev06.scheduler.BukkitSchedulerAdapter;
 import com.github.liamdev06.scheduler.handler.SchedulerHandlerManager;
@@ -19,6 +21,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 /**
  * Represents the plugin entry point for a plugin using this framework/library.
@@ -176,6 +179,22 @@ public abstract class LPlugin extends JavaPlugin {
      */
     public @NonNull ConfigurationManager getConfigurationManager() {
         return this.configurationManager;
+    }
+
+    /**
+     * @param fileId The id of the file to get the config for.
+     * @return A ConfigurationProvider for the file id entered.
+     */
+    public Optional<ConfigurationProvider> getRegisteredConfig(@NonNull String fileId) {
+        return this.configurationManager.getConfigById(fileId);
+    }
+
+    /**
+     * @param identifier The identifier of the config to get.
+     * @return A ConfigurationProvider for the identifier entered.
+     */
+    public Optional<ConfigurationProvider> getRegisteredConfig(@NonNull ConfigIdentifier identifier) {
+        return this.configurationManager.getConfigById(identifier);
     }
 
     /**
