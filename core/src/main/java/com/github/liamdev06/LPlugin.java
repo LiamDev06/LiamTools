@@ -142,7 +142,7 @@ public abstract class LPlugin extends JavaPlugin {
         LOG.info("                                     ");
         LOG.info("Internal ID: " + this.parentPluginIdentifier);
         LOG.info("Found Main Class: " + this.parentPluginClass.getSimpleName() + " (" + this.parentPluginClass.getPackageName() + ")");
-        LOG.info("Version: v" + this.getPluginMeta().getVersion() + " (" + version + ", " + server.getBukkitVersion() + ")");
+        LOG.info("Version: v" + this.getPluginMeta().getVersion() + " (Minecraft: " + version + ", " + server.getBukkitVersion() + ")");
         LOG.info("#-----------------------------------#");
     }
 
