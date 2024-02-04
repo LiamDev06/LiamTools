@@ -12,7 +12,6 @@
 
     <modules>
         <module>core</module>
-        <module>item</module>
     </modules>
 
     <properties>
@@ -103,11 +102,18 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.30</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>configurate-yaml</artifactId>
+            <version>4.1.2</version>
+            <scope>provided</scope> <!-- Make sure to include in plugin and plugin.yml -->
         </dependency>
     </dependencies>
 </project>

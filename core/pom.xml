@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>core</name>
     <artifactId>liam-tools-core</artifactId>
 
     <dependencies>
@@ -16,16 +17,6 @@
             <groupId>dev.jorel</groupId>
             <artifactId>commandapi-bukkit-shade</artifactId>
             <version>9.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.spongepowered</groupId>
-            <artifactId>configurate-yaml</artifactId>
-            <version>4.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.spongepowered</groupId>
-            <artifactId>configurate-gson</artifactId>
-            <version>4.1.2</version>
         </dependency>
     </dependencies>
 </project>
