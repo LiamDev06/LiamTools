@@ -2,6 +2,7 @@ package com.github.liamdev06.utils.bukkit;
 
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -37,7 +38,7 @@ public class ComponentUtil {
         if (text == null) {
             return Component.empty();
         }
-        return PlayerMessenger.MINI_MESSAGE.deserialize(text);
+        return PlayerMessenger.MINI_MESSAGE.deserialize(text).decoration(TextDecoration.ITALIC, false);
     }
 
     /**
