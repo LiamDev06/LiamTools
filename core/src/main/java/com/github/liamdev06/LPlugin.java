@@ -32,7 +32,6 @@ import java.util.Optional;
  */
 public abstract class LPlugin extends JavaPlugin {
 
-    private static final @NonNull String PACKAGE = LPlugin.class.getPackageName();
     public static Logger LOG;
 
     private final @NonNull Class<? extends LPlugin> parentPluginClass;
@@ -54,7 +53,7 @@ public abstract class LPlugin extends JavaPlugin {
         this.parentPluginIdentifier = this.getPluginMeta().getName();
         LOG = LoggerUtil.createLogger(this.parentPluginIdentifier);
 
-        this.reflections = new Reflections(PACKAGE);
+        this.reflections = new Reflections(this.parentPluginClass.getPackageName());
         this.registryFactory = new RegistryFactory(this.reflections, this);
 
         try {
@@ -79,12 +78,14 @@ public abstract class LPlugin extends JavaPlugin {
      */
     public abstract void onShutdown();
 
+    @Deprecated
     @Override
     public void onLoad() {
         CommandAPI.onLoad(new CommandAPIBukkitConfig(this).silentLogs(true));
         this.onPreLoad();
     }
 
+    @Deprecated
     @Override
     public void onEnable() {
         final long timeAtStart = System.currentTimeMillis();
@@ -93,7 +94,7 @@ public abstract class LPlugin extends JavaPlugin {
         }
 
         this.componentManager = new ComponentManager(this, this.registryFactory);
-        this.commandManager = new CommandManager(this);
+        this.commandManager = new CommandManager(this.registryFactory);
         this.schedulerAdapter = new BukkitSchedulerAdapter(this);
         this.schedulerHandlerManager = new SchedulerHandlerManager(this.registryFactory);
 
@@ -113,6 +114,7 @@ public abstract class LPlugin extends JavaPlugin {
         }
     }
 
+    @Deprecated
     @Override
     public void onDisable() {
         final long timeAtStart = System.currentTimeMillis();

@@ -1,6 +1,7 @@
 package com.github.liamdev06.registry;
 
 import com.github.liamdev06.LPlugin;
+import com.github.liamdev06.component.Component;
 import com.github.liamdev06.registry.component.AutoRegisteringFeature;
 import com.github.liamdev06.utils.java.SinglePointInitiator;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -119,9 +120,7 @@ public class RegistryFactory extends SinglePointInitiator {
      * Executes the implementation of all {@link AutoRegisteringFeature} which instantiates all auto registering classes.
      */
     public void executeAllAutoRegistering() {
-        for (AutoRegisteringFeature module : this.autoRegisteringComponents) {
-            module.executeAutoRegistering(this);
-        }
+        this.autoRegisteringComponents.forEach(component -> component.executeAutoRegistering(this));
     }
 
     /**
