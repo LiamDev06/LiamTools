@@ -11,9 +11,7 @@ import org.spongepowered.configurate.loader.AbstractConfigurationLoader;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,51 +24,49 @@ public class ConfigurationManager extends SinglePointInitiator {
     private final @NonNull Logger logger;
     private final @NonNull Map<String, ConfigurationProvider> configurations;
 
-    public ConfigurationManager(@NonNull LPlugin plugin) throws URISyntaxException {
+    public ConfigurationManager(@NonNull LPlugin plugin) throws IOException {
         this.configurations = new HashMap<>();
 
-        ClassLoader classLoader = this.getClass().getClassLoader();
         Logger logger = LoggerUtil.createLoggerWithIdentifier(plugin, "ConfigManager");
         this.logger = logger;
 
-        Class<? extends LPlugin> entryPointClass = plugin.getClass();
-        if (!entryPointClass.isAnnotationPresent(LoadConfigurations.class)) {
+        Class<? extends LPlugin> mainClass = plugin.getClass();
+        if (!mainClass.isAnnotationPresent(LoadConfigurations.class)) {
             return;
         }
 
         boolean freshSetup = false;
-        File config = new File(plugin.getDataFolder(), "config.yml");
+        File dataFolder = plugin.getDataFolder();
+        File config = new File(dataFolder, "config.yml");
 
         if (!config.exists()) {
             freshSetup = true;
-            LPlugin.LOG.info("Detected fresh plugin setup.");
+            logger.info("Detected fresh plugin setup.");
 
-            if (plugin.getDataFolder().mkdir()) {
-                LPlugin.LOG.info("Plugin data folder was created.");
+            if (dataFolder.mkdir()) {
+                logger.info("Plugin data folder was created.");
             }
         }
 
-        for (String fileName : entryPointClass.getAnnotation(LoadConfigurations.class).value()) {
+        for (String fileName : mainClass.getAnnotation(LoadConfigurations.class).value()) {
             String[] args = fileName.split("\\.");
             if (args.length == 0) {
                 logger.error("Could not find an extension for config '" + fileName + "'. Skipping it in load in!");
                 continue;
             }
 
-            URL url = classLoader.getResource(fileName);
-            if (url == null) {
-                logger.error("Could not get a resource URL for " + fileName);
-                continue;
+            File file = new File(dataFolder, fileName);
+            if (!file.exists() && file.createNewFile()) {
+                logger.info("Created new plugin configuration file: " + dataFolder.getPath() + "/" + fileName);
             }
 
-            Path path = Path.of(url.toURI());
             AbstractConfigurationLoader<?> loader;
             String extension = args[args.length - 1];
 
             if (extension.equals("yml")) {
-                loader = YamlConfigurationLoader.builder().path(path).build();
+                loader = YamlConfigurationLoader.builder().file(file).build();
             } else if (extension.equals("json")) {
-                loader = GsonConfigurationLoader.builder().path(path).build();
+                loader = GsonConfigurationLoader.builder().file(file).build();
             } else {
                 logger.error("Config with id '" + fileName + "' does not use the extension .yml or .json! Skipping it in load in!");
                 continue;
