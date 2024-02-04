@@ -20,7 +20,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -46,6 +46,9 @@ public abstract class LPlugin extends JavaPlugin {
     private SchedulerAdapter schedulerAdapter;
     private SchedulerHandlerManager schedulerHandlerManager;
 
+    private boolean shouldLogStartupInformationStart = true;
+    private boolean shouldLogStartupInformationDone = true;
+
     public LPlugin() {
         this.parentPluginClass = this.getClass();
         this.parentPluginIdentifier = this.getPluginMeta().getName();
@@ -56,7 +59,7 @@ public abstract class LPlugin extends JavaPlugin {
 
         try {
             this.configurationManager = new ConfigurationManager(this);
-        } catch (URISyntaxException exception) {
+        } catch (IOException exception) {
             throw new RuntimeException("Could not set up ConfigurationManager!", exception);
         }
     }
@@ -85,7 +88,9 @@ public abstract class LPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         final long timeAtStart = System.currentTimeMillis();
-        this.onStartup();
+        if (this.shouldLogStartupInformationStart) {
+            this.logStartupInformationStart(this.getServer());
+        }
 
         this.componentManager = new ComponentManager(this, this.registryFactory);
         this.commandManager = new CommandManager(this);
@@ -97,16 +102,20 @@ public abstract class LPlugin extends JavaPlugin {
 
         CommandAPI.onEnable();
         new ListenerRegistryFactory(this).registerAllListeners();
+        this.onStartup();
         this.schedulerHandlerManager.startAllAutoSchedulers();
 
         long finishedTime = System.currentTimeMillis() - timeAtStart;
-        this.logStartupInformationDone(finishedTime);
+        if (this.shouldLogStartupInformationDone) {
+            this.logStartupInformationDone(finishedTime);
+        } else {
+            LOG.info("Plugin finished loading in " + finishedTime + "ms.");
+        }
     }
 
     @Override
     public void onDisable() {
         final long timeAtStart = System.currentTimeMillis();
-        LOG.info("Starting shutdown of " + this.parentPluginIdentifier + "...");
 
         this.onShutdown();
         CommandAPI.onDisable();
@@ -119,7 +128,7 @@ public abstract class LPlugin extends JavaPlugin {
         }
 
         long finishedTime = System.currentTimeMillis() - timeAtStart;
-        LOG.info(this.parentPluginIdentifier + " shutdown in " + finishedTime + "ms.");
+        LOG.info("Plugin shutdown in " + finishedTime + "ms.");
     }
 
     private void logStartupInformationStart(@NonNull Server server) {
@@ -151,6 +160,22 @@ public abstract class LPlugin extends JavaPlugin {
      */
     public static @NonNull LPlugin getInstance() {
         return getPlugin(LPlugin.class);
+    }
+
+    /**
+     * If the plugin should send a log message when the plugin is starting.
+     * @param value {@code true} if a log message should be sent, {@code false} otherwise.
+     */
+    public void setShouldLogStartupInformationStart(boolean value) {
+        this.shouldLogStartupInformationStart = value;
+    }
+
+    /**
+     * If the plugin should send a log message once the plugin startup is finished.
+     * @param value {@code true} if a log message should be sent, {@code false} otherwise.
+     */
+    public void setShouldLogStartupInformationDone(boolean value) {
+        this.shouldLogStartupInformationDone = value;
     }
 
     /**
