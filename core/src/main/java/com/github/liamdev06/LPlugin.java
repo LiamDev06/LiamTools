@@ -166,7 +166,7 @@ public abstract class LPlugin extends JavaPlugin {
      * If the plugin should send a log message when the plugin is starting.
      * @param value {@code true} if a log message should be sent, {@code false} otherwise.
      */
-    public void setShouldLogStartupInformationStart(boolean value) {
+    public void shouldLogStartupInformationStart(boolean value) {
         this.shouldLogStartupInformationStart = value;
     }
 
@@ -174,7 +174,7 @@ public abstract class LPlugin extends JavaPlugin {
      * If the plugin should send a log message once the plugin startup is finished.
      * @param value {@code true} if a log message should be sent, {@code false} otherwise.
      */
-    public void setShouldLogStartupInformationDone(boolean value) {
+    public void shouldLogStartupInformationDone(boolean value) {
         this.shouldLogStartupInformationDone = value;
     }
 
