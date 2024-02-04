@@ -1,6 +1,5 @@
 package com.github.liamdev06.command;
 
-import com.github.liamdev06.LPlugin;
 import com.github.liamdev06.registry.RegistryFactory;
 import com.github.liamdev06.registry.component.AutoRegisteringFeature;
 import com.github.liamdev06.utils.java.SinglePointInitiator;
@@ -12,8 +11,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 public class CommandManager extends SinglePointInitiator implements AutoRegisteringFeature {
 
-    public CommandManager(@NonNull LPlugin plugin) {
-        plugin.getRegistryFactory().registerAutoRegisteringComponent(this);
+    public CommandManager(@NonNull RegistryFactory registryFactory) {
+        registryFactory.registerAutoRegisteringComponent(this);
     }
 
     /**
