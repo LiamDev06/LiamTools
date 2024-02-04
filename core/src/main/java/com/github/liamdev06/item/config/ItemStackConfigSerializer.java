@@ -19,6 +19,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Configurate Type serializer to support serializing and deserializing {@link ItemStack} to/from configurations.
+ */
 public class ItemStackConfigSerializer implements TypeSerializer<ItemStack> {
 
     @Override
