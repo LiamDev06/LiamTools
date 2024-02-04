@@ -13,16 +13,16 @@ import org.spongepowered.configurate.loader.ConfigurationLoader;
  */
 public class ConfigurationProvider {
 
-    private final @NonNull String fileName;
+    private final @NonNull String fileId;
     private final @NonNull ConfigurationLoader<?> loader;
     private ConfigurationNode rootNode;
 
-    public ConfigurationProvider(@NonNull String fileName, @NonNull ConfigurationLoader<?> loader) {
-        this(fileName, loader, ConfigurationOptions.defaults());
+    public ConfigurationProvider(@NonNull String fileId, @NonNull ConfigurationLoader<?> loader) {
+        this(fileId, loader, ConfigurationOptions.defaults());
     }
 
-    public ConfigurationProvider(@NonNull String fileName, @NonNull ConfigurationLoader<?> loader, @NonNull ConfigurationOptions options) {
-        this.fileName = fileName;
+    public ConfigurationProvider(@NonNull String fileId, @NonNull ConfigurationLoader<?> loader, @NonNull ConfigurationOptions options) {
+        this.fileId = fileId;
         this.loader = loader;
         this.reload(options);
     }
@@ -43,17 +43,17 @@ public class ConfigurationProvider {
         try {
             this.rootNode = this.loader.load(options);
         } catch (ConfigurateException exception) {
-            throw new RuntimeException("Something went wrong when loading in the configuration with file name '" + fileName + "'", exception);
+            throw new RuntimeException("Something went wrong when loading in the configuration with file id '" + this.fileId + "'", exception);
         }
     }
 
     /**
-     * Gets the file name of this configuration.
+     * Gets the file id of this configuration.
      *
-     * @return The file name as a non-null {@link String}.
+     * @return The file id as a non-null {@link String}.
      */
-    public @NonNull String getFileName() {
-        return this.fileName;
+    public @NonNull String getFileId() {
+        return this.fileId;
     }
 
     /**

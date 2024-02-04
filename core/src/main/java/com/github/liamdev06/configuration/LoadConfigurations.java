@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 public @interface LoadConfigurations {
 
     /**
-     * @return Array of {@link String} file names corresponding to the configuration files to load in.
+     * @return Array of {@link String} file identifiers corresponding to the configuration files to load in.
      *         Only loads in embedded configurations located in the JAR's {@code /resources} directory.
      *         <p>
      *         If the file is not located in the root resources directory, also include the added path.
