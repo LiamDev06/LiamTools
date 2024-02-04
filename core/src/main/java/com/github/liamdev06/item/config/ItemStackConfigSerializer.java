@@ -1,6 +1,6 @@
 package com.github.liamdev06.item.config;
 
-import com.github.liamdev06.utils.bukkit.ComponentUtil;
+import com.github.liamdev06.utils.bukkit.legacy.LegacyComponentUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -50,11 +50,11 @@ public class ItemStackConfigSerializer implements TypeSerializer<ItemStack> {
         }
 
         if (node.hasChild("display-name")) {
-            meta.displayName(ComponentUtil.toComponent(node.node("display-name").getString("")));
+            meta.displayName(LegacyComponentUtil.toComponent(node.node("display-name").getString("")));
         }
 
         if (node.hasChild("lore")) {
-            List<Component> lore = ComponentUtil.toComponentList(node.node("lore").getList(String.class));
+            List<Component> lore = LegacyComponentUtil.toComponentList(node.node("lore").getList(String.class));
             meta.lore(lore);
         }
 

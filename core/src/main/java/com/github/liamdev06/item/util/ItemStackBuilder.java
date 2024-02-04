@@ -1,6 +1,6 @@
 package com.github.liamdev06.item.util;
 
-import com.github.liamdev06.utils.bukkit.PlayerMessenger;
+import com.github.liamdev06.utils.bukkit.legacy.LegacyPlayerMessenger;
 import com.github.liamdev06.utils.java.ContentVariable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -71,7 +71,7 @@ public class ItemStackBuilder {
      * @return This builder instance.
      */
     public @NonNull ItemStackBuilder name(@NonNull String name, @Nullable ContentVariable... variables) {
-        this.item.editMeta(meta -> meta.displayName(PlayerMessenger.handleToComponent(name, variables)));
+        this.item.editMeta(meta -> meta.displayName(LegacyPlayerMessenger.handleToComponent(name, variables)));
         return this;
     }
 
@@ -109,7 +109,7 @@ public class ItemStackBuilder {
     public @NonNull ItemStackBuilder lore(@NonNull List<String> lines, @Nullable ContentVariable... variables) {
         this.item.editMeta(meta -> {
             final List<Component> array = lines.stream()
-                    .map(s -> PlayerMessenger.handleToComponent(s, variables))
+                    .map(s -> LegacyPlayerMessenger.handleToComponent(s, variables))
                     .toList();
             meta.lore(array);
         });
