@@ -3,7 +3,7 @@ package com.github.liamdev06;
 import com.github.liamdev06.command.CommandManager;
 import com.github.liamdev06.component.Component;
 import com.github.liamdev06.component.ComponentManager;
-import com.github.liamdev06.configuration.ConfigIdentifier;
+import com.github.liamdev06.configuration.ConfigIdWrapper;
 import com.github.liamdev06.configuration.ConfigurationManager;
 import com.github.liamdev06.configuration.ConfigurationProvider;
 import com.github.liamdev06.registry.RegistryFactory;
@@ -18,6 +18,7 @@ import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.reflections.Reflections;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -53,7 +54,10 @@ public abstract class LPlugin extends JavaPlugin {
         this.parentPluginIdentifier = this.getPluginMeta().getName();
         LOG = LoggerUtil.createLogger(this.parentPluginIdentifier);
 
-        this.reflections = new Reflections(this.parentPluginClass.getPackageName());
+        this.reflections = new Reflections(ConfigurationBuilder.build().forPackages(
+                "com.github.liamdev06",
+                this.parentPluginClass.getPackageName()
+        ));
         this.registryFactory = new RegistryFactory(this.reflections, this);
 
         try {
@@ -188,7 +192,7 @@ public abstract class LPlugin extends JavaPlugin {
     }
 
     /**
-     * @return The {@link Reflections} instance for this plugin using the package of {@link LPlugin#PACKAGE}.
+     * @return The {@link Reflections} instance for this plugin.
      */
     public @NonNull Reflections getReflections() {
         return this.reflections;
@@ -220,7 +224,7 @@ public abstract class LPlugin extends JavaPlugin {
      * @param identifier The identifier of the config to get.
      * @return A ConfigurationProvider for the identifier entered.
      */
-    public Optional<ConfigurationProvider> getRegisteredConfig(@NonNull ConfigIdentifier identifier) {
+    public Optional<ConfigurationProvider> getRegisteredConfig(@NonNull ConfigIdWrapper identifier) {
         return this.configurationManager.getConfigById(identifier);
     }
 
