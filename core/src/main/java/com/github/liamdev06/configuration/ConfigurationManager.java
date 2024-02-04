@@ -93,6 +93,13 @@ public class ConfigurationManager extends SinglePointInitiator {
     }
 
     /**
+     * Reloads all configurations currently loaded in.
+     */
+    public void reloadConfigurations() {
+        this.configurations.values().forEach(ConfigurationProvider::reload);
+    }
+
+    /**
      * Find a cached configuration based on its file identifier.
      *
      * @param fileId The file name to find a configuration with.

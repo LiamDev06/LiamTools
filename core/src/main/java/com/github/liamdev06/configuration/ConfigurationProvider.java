@@ -15,7 +15,7 @@ public class ConfigurationProvider {
 
     private final @NonNull String fileName;
     private final @NonNull ConfigurationLoader<?> loader;
-    private final @NonNull ConfigurationNode rootNode;
+    private ConfigurationNode rootNode;
 
     public ConfigurationProvider(@NonNull String fileName, @NonNull ConfigurationLoader<?> loader) {
         this(fileName, loader, ConfigurationOptions.defaults());
@@ -24,8 +24,24 @@ public class ConfigurationProvider {
     public ConfigurationProvider(@NonNull String fileName, @NonNull ConfigurationLoader<?> loader, @NonNull ConfigurationOptions options) {
         this.fileName = fileName;
         this.loader = loader;
+        this.reload(options);
+    }
+
+    /**
+     * Reloads this configuration into cache.
+     */
+    public void reload() {
+        this.reload(ConfigurationOptions.defaults());
+    }
+
+    /**
+     * Reloads this configuration into cache.
+     *
+     * @param options Configuration options that should be used when reloading.
+     */
+    public void reload(@NonNull ConfigurationOptions options) {
         try {
-            this.rootNode = loader.load(options);
+            this.rootNode = this.loader.load(options);
         } catch (ConfigurateException exception) {
             throw new RuntimeException("Something went wrong when loading in the configuration with file name '" + fileName + "'", exception);
         }
