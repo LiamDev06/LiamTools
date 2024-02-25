@@ -1,6 +1,8 @@
 package com.github.liamdev06.configuration;
 
 import com.github.liamdev06.LPlugin;
+import com.github.liamdev06.configuration.serializers.sound.SoundConfigSerializer;
+import com.github.liamdev06.configuration.serializers.sound.SoundWrapper;
 import com.github.liamdev06.item.config.ItemStackConfigSerializer;
 import com.github.liamdev06.utils.bukkit.BukkitFileUtil;
 import com.github.liamdev06.utils.java.LoggerUtil;
@@ -11,7 +13,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +38,7 @@ public class ConfigurationManager extends SinglePointInitiator {
         TypeSerializerCollection serializers = TypeSerializerCollection.defaults()
                 .childBuilder()
                 .register(TypeToken.get(ItemStack.class), new ItemStackConfigSerializer())
+                .register(TypeToken.get(SoundWrapper.class), new SoundConfigSerializer())
                 .build();
         this.options = ConfigurationOptions.defaults().serializers(serializers);
 
@@ -58,11 +60,7 @@ public class ConfigurationManager extends SinglePointInitiator {
 
         for (String identifier : mainClass.getAnnotation(LoadConfigurations.class).value()) {
             File file = BukkitFileUtil.setupPluginFile(plugin, identifier + ".yml"); // TODO: Add support for JSON as well.
-            YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
-                    .file(file)
-                    .build();
-
-            ConfigurationProvider provider = new ConfigurationProvider(identifier, loader, this.options);
+            ConfigurationProvider provider = new ConfigurationProvider(identifier, file, this.options);
             this.registerConfig(provider);
         }
     }

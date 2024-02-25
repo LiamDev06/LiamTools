@@ -5,6 +5,9 @@ import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+
+import java.io.File;
 
 /**
  * Represents a configuration provider that can be used to access application configurations.
@@ -14,17 +17,19 @@ import org.spongepowered.configurate.loader.ConfigurationLoader;
 public class ConfigurationProvider {
 
     private final @NonNull String fileId;
-    private final @NonNull ConfigurationLoader<?> loader;
+    private final @NonNull File file;
+    private @NonNull ConfigurationLoader<?> loader;
     private ConfigurationNode rootNode;
 
-    public ConfigurationProvider(@NonNull String fileId, @NonNull ConfigurationLoader<?> loader) {
-        this(fileId, loader, ConfigurationOptions.defaults());
+    public ConfigurationProvider(@NonNull String fileId, @NonNull File file, @NonNull ConfigurationOptions options) {
+        this.fileId = fileId;
+        this.file = file;
+        this.loader = this.setupConfigLoader();
+        this.reload(options);
     }
 
-    public ConfigurationProvider(@NonNull String fileId, @NonNull ConfigurationLoader<?> loader, @NonNull ConfigurationOptions options) {
-        this.fileId = fileId;
-        this.loader = loader;
-        this.reload(options);
+    private ConfigurationLoader<?> setupConfigLoader() {
+        return YamlConfigurationLoader.builder().file(this.file).build();
     }
 
     /**
@@ -41,6 +46,7 @@ public class ConfigurationProvider {
      */
     public void reload(@NonNull ConfigurationOptions options) {
         try {
+            this.loader = this.setupConfigLoader();
             this.rootNode = this.loader.load(options);
         } catch (ConfigurateException exception) {
             throw new RuntimeException("Something went wrong when loading in the configuration with file id '" + this.fileId + "'", exception);
