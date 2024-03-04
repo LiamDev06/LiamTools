@@ -192,21 +192,21 @@ public abstract class LPlugin extends JavaPlugin {
     }
 
     /**
-     * @return The {@link Reflections} instance for this plugin.
+     * @return Reflections instance for this plugin.
      */
     public @NonNull Reflections getReflections() {
         return this.reflections;
     }
 
     /**
-     * @return The {@link RegistryFactory} responsible for class instance registering and instantiation.
+     * @return Registry factory responsible for class instance registering and instantiation.
      */
     public @NonNull RegistryFactory getRegistryFactory() {
         return this.registryFactory;
     }
 
     /**
-     * @return The {@link ConfigurationManager} responsible for storing and managing configurations.
+     * @return Configuratio manager responsible for storing and managing configurations.
      */
     public @NonNull ConfigurationManager getConfigurationManager() {
         return this.configurationManager;
@@ -229,42 +229,40 @@ public abstract class LPlugin extends JavaPlugin {
     }
 
     /**
-     * @return The {@link ComponentManager} responsible for managing and holding all modules.
+     * @return Component manager responsible for managing and holding all modules.
      */
     public @NonNull ComponentManager getComponentManager() {
         return this.componentManager;
     }
 
     /**
-     * @return The {@link CommandManager} that provides custom integration extension to the {@link CommandAPI}.
+     * @return Command manager that provides custom integration extension to the {@link CommandAPI}.
      */
     public @NonNull CommandManager getCommandManager() {
         return this.commandManager;
     }
 
     /**
-     * @return The {@link SchedulerAdapter} used to work with synchronous and asynchronous tasks.
+     * @return Scheduler adapter used to work with synchronous and asynchronous tasks.
      */
     public @NonNull SchedulerAdapter getSchedulerAdapter() {
         return this.schedulerAdapter;
     }
 
     /**
-     * @return The {@link SchedulerHandlerManager} used to abstract task logic to separate classes.
+     * @return Scheduler handler manager used to abstract task logic to separate classes.
      */
     public @NonNull SchedulerHandlerManager getSchedulerHandlerManager() {
         return this.schedulerHandlerManager;
     }
 
     /**
-     * Gets the instance of a registered component from the {@link ComponentManager}.
-     * <p>
-     * This method is unchecked meaning if a component is null, an {@link NullPointerException} will be thrown.
+     * Gets the instance of a registered component from the component manager.
      *
      * @param componentClass Class of the component.
      * @return Instance of a registered {@link Component}.
-     * @see {@link LPlugin#getComponent(Class)}
-     * @throws NullPointerException If the component is not registered within the {@link ComponentManager}.
+     * @see LPlugin#getComponent(Class)
+     * @throws NullPointerException If the component is not registered within the component manager.
      */
     public <T extends Component> @NonNull T getRegisteredComponent(@NonNull Class<T> componentClass) {
         T module = this.getComponentManager().getComponent(componentClass);
@@ -278,7 +276,7 @@ public abstract class LPlugin extends JavaPlugin {
      * Static method to get an instance of a registered component.
      *
      * @param componentClass Class of the component.
-     * @return Instance of a registered {@link Component}.
+     * @return Instance of a registered component.
      */
     public static <T extends Component> @NonNull T getComponent(@NonNull Class<T> componentClass) {
         return LPlugin.getInstance().getRegisteredComponent(componentClass);

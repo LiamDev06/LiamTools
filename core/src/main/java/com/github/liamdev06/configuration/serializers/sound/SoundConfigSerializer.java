@@ -57,6 +57,6 @@ public class SoundConfigSerializer implements TypeSerializer<SoundWrapper> {
 
     @Override
     public void serialize(Type type, @Nullable SoundWrapper obj, ConfigurationNode node) throws SerializationException {
-        throw new UnsupportedOperationException("This is not done yet!");
+        throw new UnsupportedOperationException("This is not supported yet.");
     }
 }
