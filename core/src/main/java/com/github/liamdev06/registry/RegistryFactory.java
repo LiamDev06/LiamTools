@@ -186,4 +186,14 @@ public class RegistryFactory extends SinglePointInitiator {
                 .map(foundClass -> (Class<? extends T>) foundClass)
                 .collect(Collectors.toSet());
     }
+
+    /**
+     * Gets all classes that implements the provided interface.
+     *
+     * @param interfaceClass Interface class to implement.
+     * @return Set of classes that implement the {@code interfaceClass}.
+     */
+    public <T> @NonNull Set<Class<? extends T>> getClassesImplementing(@NonNull Class<T> interfaceClass) {
+        return this.reflections.getSubTypesOf(interfaceClass);
+    }
 }
