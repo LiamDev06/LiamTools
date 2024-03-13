@@ -5,5 +5,5 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface ConfigReloadable {
 
-    <T extends LPlugin> void loadConfig(@NonNull T plugin);
+    void loadConfig(@NonNull LPlugin plugin);
 }
