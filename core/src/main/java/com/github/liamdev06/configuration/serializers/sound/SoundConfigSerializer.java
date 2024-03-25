@@ -16,7 +16,7 @@ public class SoundConfigSerializer implements TypeSerializer<SoundWrapper> {
     @Override
     public SoundWrapper deserialize(Type type, ConfigurationNode node) throws SerializationException {
         String string = node.getString("");
-        String[] args = string.split("\\.");
+        String[] args = string.split("\\,");
 
         if (args.length == 0) {
             return new SoundWrapper(Sound.AMBIENT_CAVE, DEFAULT_VOLUME, DEFAULT_PITCH);
