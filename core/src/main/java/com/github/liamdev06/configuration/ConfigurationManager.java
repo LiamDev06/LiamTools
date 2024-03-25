@@ -1,6 +1,7 @@
 package com.github.liamdev06.configuration;
 
 import com.github.liamdev06.LPlugin;
+import com.github.liamdev06.configuration.serializers.location.LocationConfigSerializer;
 import com.github.liamdev06.configuration.serializers.sound.SoundConfigSerializer;
 import com.github.liamdev06.configuration.serializers.sound.SoundWrapper;
 import com.github.liamdev06.item.config.ItemStackConfigSerializer;
@@ -8,6 +9,7 @@ import com.github.liamdev06.utils.bukkit.BukkitFileUtil;
 import com.github.liamdev06.utils.java.LoggerUtil;
 import com.github.liamdev06.utils.java.SinglePointInitiator;
 import io.leangen.geantyref.TypeToken;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
@@ -39,6 +41,7 @@ public class ConfigurationManager extends SinglePointInitiator {
                 .childBuilder()
                 .register(TypeToken.get(ItemStack.class), new ItemStackConfigSerializer())
                 .register(TypeToken.get(SoundWrapper.class), new SoundConfigSerializer())
+                .register(TypeToken.get(Location.class), new LocationConfigSerializer())
                 .build();
         this.options = ConfigurationOptions.defaults().serializers(serializers);
 
