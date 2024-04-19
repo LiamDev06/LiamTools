@@ -3,14 +3,18 @@ package com.github.liamdev06.utils.bukkit.legacy;
 import com.github.liamdev06.utils.java.ContentVariable;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Utility class for sending legacy messages to players that applies default message handling from LegacyAmpersand.
@@ -133,5 +137,47 @@ public class LegacyPlayerMessenger {
             }
         }
         return input;
+    }
+
+    public static @NonNull Component handleVariables(@Nullable Component input, @Nullable ContentVariable... variables) {
+        if (input == null) {
+            return Component.empty();
+        }
+        if (variables == null) {
+            return input;
+        }
+
+        for (ContentVariable variable : variables) {
+            if (variable != null) {
+                input = input.replaceText(TextReplacementConfig.builder()
+                        .matchLiteral(variable.replace())
+                        .replacement(LegacyPlayerMessenger.handleToComponent(variable.stringReplaceWith()))
+                        .build());
+            }
+        }
+        return input;
+    }
+
+    public static @NonNull List<Component> handleVariables(@Nullable List<Component> input, @Nullable ContentVariable... variables) {
+        if (input == null) {
+            return Collections.emptyList();
+        }
+        if (variables == null) {
+            return input;
+        }
+
+        List<Component> list = new ArrayList<>();
+        for (Component component : input) {
+            for (ContentVariable variable : variables) {
+                if (variable != null) {
+                    component = component.replaceText(TextReplacementConfig.builder()
+                            .matchLiteral(variable.replace())
+                            .replacement(LegacyPlayerMessenger.handleToComponent(variable.stringReplaceWith()))
+                            .build());
+                }
+            }
+            list.add(component);
+        }
+        return list;
     }
 }

@@ -20,6 +20,8 @@ public class ConfigReloader {
     }
 
     public void reload() {
+        this.plugin.getConfigurationManager().reloadConfigurations();
+
         this.registryFactory.getClassesImplementing(ConfigReloadable.class).forEach(clazz -> {
             ConfigReloadable reloadable = (ConfigReloadable) this.registryFactory.createEffectiveInstance(clazz);
             if (reloadable == null) {

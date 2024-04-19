@@ -15,7 +15,7 @@ import java.util.UUID;
 public class SoundUtil {
 
     private static final float DEFAULT_VOLUME = 1;
-    private static final float DEFAULT_PITCH = 1;
+    private static final float DEFAULT_PITCH = 0;
 
     /**
      * Play a sound to a {@link Player} at their {@link org.bukkit.Location} with a default volume a pitch.
@@ -62,5 +62,9 @@ public class SoundUtil {
         if (player != null) {
             playSound(player, sound);
         }
+    }
+
+    public static void playClickSound(@NonNull Player player) {
+        player.playSound(player, Sound.UI_BUTTON_CLICK, DEFAULT_VOLUME, 0.9f);
     }
 }
